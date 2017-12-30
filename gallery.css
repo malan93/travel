@@ -1,0 +1,19 @@
+.im{
+	width:250px;
+	height:200px;
+	margin:10px;
+	display:inline-block;
+	box-shadow:3px 3px 10px #000;
+	webkit-box-shadow:3px 3px 29px #000;
+	
+}
+.footer-left{
+	
+	background-color:#006400;
+}
+.footer-right{
+	float:right;
+	background-color:#006400;
+	
+	
+}
