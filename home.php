@@ -79,6 +79,26 @@
 			left: 50%;
 			transform: translate(-50%, -50%);
 		}
+		.pagination{
+				margin: 30px;
+
+		}
+		.pagination li{
+			display: inline-block;
+
+			margin:0 5px;
+		}
+		.pagination li a{
+			display: inline-block;
+			padding:8px 12px;
+			 border: 1px solid #000;
+			 text-decoration: none;
+
+		}
+		.pagination li a.active{
+			font-weight: bold;
+			background: #f5f5f5;
+		}
 	</style>
 </head>
 <body>
@@ -124,19 +144,84 @@
 		</div>
 		<div id="content">
 			<?php
-				$db= mysqli_connect("localhost","root","","travel");
-				$sql="SELECT * FROM location";
-				$result = mysqli_query($db,$sql);
-				
-				while($row=mysqli_fetch_array($result))
-				{
-					echo "<div id='img_div'>";
-						echo"<img src='locationimg/".$row['image']."'>";
-						echo "<h3>"."<p>".$row['name']."</p>"."</h3>";
-						echo"<p>".$row['des']."</p>";
-					echo "</div>";
-					
+			$con= mysqli_connect("localhost","root","","travel");
+
+			if($con->connect_errno)
+			{
+				die('sorry database not connected');
+			}
+
+			if(isset($_GET['page']))
+			{
+				$page = $_GET['page'];
+
+			}else{
+				$page = 1;
+			}
+
+			if($page==" "||$page==1)
+			{
+				$page1 = 0;
+
+			}else {
+				$page1 = ($page * 5) - 5;
+			}
+
+
+			$sql= "SELECT * FROM location  limit $page1,5";
+			$result = $con->query($sql) or die($con->error);	;
+
+			while($row= $result->fetch_assoc())
+			{
+				echo "<div id='img_div'>";
+					echo"<img src='locationimg/".$row['image']."'>";
+					echo "<h3>"."<p>".$row['name']."</p>"."</h3>";
+					echo"<p>".$row['des']."</p>";
+				echo "</div>";
+
+			}
+			//pagination links
+
+			$sql = "SELECT * FROM location";
+			$data = $con->query($sql);
+			$records = $data->num_rows;
+			$records_pages = $records/5;
+			$records_pages = ceil($records_pages);
+			$prev = $page-1;
+			$next = $page+1;
+
+			echo '<ul class="pagination">';
+			if($page>=5)
+			{
+				echo '<li><a href="?page=1">First</a></li>';
+
+			}
+			if($prev>=1)
+			{
+				echo '<li><a href="?page='.$prev.'">Prev</a></li>';
+
+			}
+
+
+			if($records_pages>=2)
+			{
+				for ($i=1; $i <=$records_pages; $i++) {
+					$active = $i == $page? 'class="active"':'';
+					echo '<li><a href="?page='.$i.'">'.$i.'</a></li>';
 				}
+
+			}
+			if($next<=$records_pages && $records_pages>=2)
+			{
+				echo '<li><a href="?page='.$next.'">Next</a></li>';
+
+			}
+			if($next<=$records_pages && $records_pages>=5)
+			{
+				echo '<li><a href="?page='.$records_pages.'">Last</a></li>';
+
+			}
+			echo '</ul>'
 			?>
 		</div>
 		
